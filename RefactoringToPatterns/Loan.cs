@@ -5,12 +5,13 @@ namespace RefactoringToPatterns
 {
     public class Loan
     {
-        public IList<Payment> payments { get; set; }
-        public double UnusedPercentage { get; set; } = 1;
-        
+        public IList<Payment> Payments { get; set; }
+
         private const long MILLIS_PER_DAY = 86400000;
         private const long DAYS_PER_YEAR = 365;
         private const long TICKS_PER_MILLIS = 10000;
+
+        private double unusedPercentage = 1;
         
         private DateTime? expiry;
         private DateTime? maturity;
@@ -45,7 +46,7 @@ namespace RefactoringToPatterns
         public static Loan NewAdvisedLine(double commitment, DateTime start, DateTime expiry, int riskRating) {
             if (riskRating > 3) return null;
             var advisedLine = new Loan(commitment, 0, start, expiry, null, riskRating);
-            advisedLine.UnusedPercentage = 0.1;
+            advisedLine.unusedPercentage = 0.1;
             return advisedLine;
         }
 
@@ -53,8 +54,8 @@ namespace RefactoringToPatterns
             if (expiry == null && maturity != null)
                 return commitment * Duration() * RiskFactor();
             if (expiry != null && maturity == null) {
-                if (UnusedPercentage != 1.0)
-                    return commitment * UnusedPercentage * Duration() * RiskFactor();
+                if (unusedPercentage != 1.0)
+                    return commitment * unusedPercentage * Duration() * RiskFactor();
                 else
                 {
                     return (outstanding * Duration() * RiskFactor())
@@ -102,7 +103,7 @@ namespace RefactoringToPatterns
             double duration = 0.0;
             double weightedAverage = 0.0;
             double sumOfPayments = 0.0;
-            foreach(var payment in payments) {
+            foreach(var payment in Payments) {
                 sumOfPayments += payment.Amount();
                 var yearsTo = YearsTo(payment.Date());
                 weightedAverage += yearsTo * payment.Amount();

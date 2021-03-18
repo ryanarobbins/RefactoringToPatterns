@@ -18,7 +18,7 @@ namespace RefactoringToPatterns
                 
             };
             var loan = Loan.NewTermLoan(400, DateTime.Now.AddYears(-4), DateTime.Now, 42);
-            loan.payments = payments;
+            loan.Payments = payments;
             Assert.That(loan.Capital(),Is.EqualTo(160.0).Within(0.01));
             Assert.That(loan.Duration(),Is.EqualTo(1.33).Within(0.01));
         }
