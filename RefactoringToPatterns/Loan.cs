@@ -11,13 +11,13 @@ namespace RefactoringToPatterns
         private const long DAYS_PER_YEAR = 365;
         private const long TICKS_PER_MILLIS = 10000;
 
-        private double unusedPercentage = 1;
-        
-        private DateTime? expiry;
-        private DateTime? maturity;
-        private double commitment;
-        private double outstanding;
-        private double riskRating;
+        public double unusedPercentage = 1;
+
+        public DateTime? expiry;
+        public DateTime? maturity;
+        public double commitment;
+        public double outstanding;
+        public double riskRating;
         private DateTime? today;
         private DateTime start;
 
@@ -31,12 +31,12 @@ namespace RefactoringToPatterns
             this.riskRating = riskRating;
             this.start = start;
         }
-        
+
         public static Loan NewTermLoan(double commitment, DateTime start, DateTime maturity, int riskRating)
         {
             return new Loan(commitment, commitment, start, null, maturity, riskRating);
         }
-        
+
         public static Loan NewRevolver(double commitment, DateTime start, DateTime expiry, int riskRating) {
 
             return new Loan(commitment, 0, start, expiry,
@@ -51,33 +51,8 @@ namespace RefactoringToPatterns
         }
 
         public double Capital() {
-            if (expiry == null && maturity != null)
-                return commitment * Duration() * RiskFactor();
-            if (expiry != null && maturity == null) {
-                if (unusedPercentage != 1.0)
-                    return commitment * unusedPercentage * Duration() * RiskFactor();
-                else
-                {
-                    return (outstanding * Duration() * RiskFactor())
-                           + (UnusedRiskAmount() * Duration() * UnusedRiskFactor());
-                }
-            }
-            return 0.0;
-        }
-
-        private double UnusedRiskFactor()
-        {
-            return UnusedRiskFactorsRepository.GetFactorForRating(riskRating);
-        }
-
-        private double UnusedRiskAmount()
-        {
-            return (commitment - outstanding);
-        }
-
-        private double RiskFactor()
-        {
-            return RiskFactorRepository.GetFactorForRating(riskRating);
+            var capitalStrategy = new CapitalStrategy();
+            return capitalStrategy.Capital(this);
         }
 
         public double Duration()
