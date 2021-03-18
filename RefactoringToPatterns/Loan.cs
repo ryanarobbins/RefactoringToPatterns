@@ -111,10 +111,5 @@ namespace RefactoringToPatterns
                 duration = weightedAverage / sumOfPayments;
             return duration;
         }
-
-        private double GetUnusedPercentage()
-        {
-            return UnusedPercentage;
-        }
     }
 }
